@@ -1,0 +1,26 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+crash.log
+
+# Packer
+packer_cache/
+*.box
+
+# AWS
+.aws/
+*.pem
+
+# Secrets
+secrets/
+*.key
+*.crt
+
+# Logs
+*.log
+
+# OS
+.DS_Store
