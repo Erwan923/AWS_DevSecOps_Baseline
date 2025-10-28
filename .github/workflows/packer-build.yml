@@ -1,0 +1,93 @@
+name: Build Golden AMI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packer/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-north-1
+  PACKER_VERSION: 1.9.4
+
+jobs:
+  build-ami:
+    name: Build and Scan AMI
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: ${{ env.PACKER_VERSION }}
+      
+      - name: Packer Init
+        working-directory: packer/ubuntu
+        run: packer init .
+      
+      - name: Packer Validate
+        working-directory: packer/ubuntu
+        run: packer validate ubuntu-baseline.pkr.hcl
+      
+      - name: Packer Build
+        working-directory: packer/ubuntu
+        run: packer build ubuntu-baseline.pkr.hcl
+      
+      - name: Extract AMI ID
+        id: ami
+        working-directory: packer/ubuntu
+        run: |
+          AMI_ID=$(jq -r '.builds[0].artifact_id' manifest.json | cut -d: -f2)
+          echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
+          echo "Built AMI: $AMI_ID"
+      
+      - name: Enable Inspector for AMI
+        run: |
+          aws inspector2 enable --resource-types EC2 --region ${{ env.AWS_REGION }} || true
+      
+      - name: Wait for Inspector Scan
+        run: |
+          echo "Waiting 60s for Inspector scan to start..."
+          sleep 60
+      
+      - name: Check Security Hub Findings
+        run: |
+          echo "Checking Security Hub for critical findings..."
+          FINDINGS=$(aws securityhub get-findings \
+            --filters '{"ResourceId":[{"Value":"${{ steps.ami.outputs.ami_id }}","Comparison":"EQUALS"}],"SeverityLabel":[{"Value":"CRITICAL","Comparison":"EQUALS"}]}' \
+            --region ${{ env.AWS_REGION }} \
+            --query 'Findings[].Id' \
+            --output text | wc -w)
+          
+          if [ "$FINDINGS" -gt "0" ]; then
+            echo "⚠️ Found $FINDINGS critical findings!"
+            echo "AMI may need remediation before production use."
+            exit 1
+          else
+            echo "✅ No critical findings detected"
+          fi
+      
+      - name: Tag AMI as validated
+        if: success()
+        run: |
+          aws ec2 create-tags \
+            --resources ${{ steps.ami.outputs.ami_id }} \
+            --tags Key=SecurityValidated,Value=true Key=ValidatedAt,Value=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+            --region ${{ env.AWS_REGION }}
+      
+      - name: Upload manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ami-manifest
+          path: packer/ubuntu/manifest.json
