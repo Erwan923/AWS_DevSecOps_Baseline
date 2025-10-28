@@ -27,3 +27,19 @@ module "vpc" {
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
   environment     = "dev"
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+  
+  cluster_name             = "devsecops-dev"
+  vpc_id                   = module.vpc.vpc_id
+  private_subnet_ids       = module.vpc.private_subnet_ids
+  environment              = "dev"
+  enable_container_insights = true
+  
+  app_name      = "demo-app"
+  app_image     = "nginx:alpine"
+  desired_count = 2
+  cpu           = 256
+  memory        = 512
+}
