@@ -16,7 +16,7 @@ Enterprise-grade multi-account infrastructure with automated CI/CD, security sca
 
 ---
 
-## 🚀 Overview
+##  Overview
 
 Production-ready AWS infrastructure platform built with Infrastructure-as-Code principles and DevSecOps best practices. Enables automated provisioning of secure, compliant cloud environments with integrated security scanning and observability.
 
@@ -29,7 +29,7 @@ Production-ready AWS infrastructure platform built with Infrastructure-as-Code p
 
 ---
 
-## 📊 Architecture
+##  Architecture
 
 <div align="center">
 
@@ -66,7 +66,7 @@ AMI Build → Packer
 
 ---
 
-## ⚡ Quick Start
+##  Quick Start
 
 ### Prerequisites
 ```bash
@@ -130,7 +130,7 @@ aws ec2 describe-vpcs --region eu-north-1 \
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 ```
 .
 ├── .github/workflows/
@@ -164,7 +164,7 @@ aws ec2 describe-vpcs --region eu-north-1 \
 
 ---
 
-## 🔒 Security
+##  Security
 
 ### Compliance Standards
 
@@ -213,7 +213,7 @@ Code Push → tfsec/Checkov Scan
 
 ---
 
-## 📈 Performance Metrics
+##  Performance Metrics
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
@@ -226,7 +226,7 @@ Code Push → tfsec/Checkov Scan
 
 ---
 
-## 💰 Cost Breakdown
+##  Cost Breakdown
 
 ### Development Environment (Monthly)
 
@@ -252,7 +252,7 @@ Code Push → tfsec/Checkov Scan
 
 ---
 
-## 🛠️ CI/CD Configuration
+## CI/CD Configuration
 
 ### GitHub Actions Workflows
 
@@ -321,7 +321,7 @@ AWS_SECRET_ACCESS_KEY      # IAM secret key
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 ### Architecture Decision Records (ADRs)
 
@@ -354,29 +354,8 @@ Alternative: Dynamic provisioning (rejected due to slower deployment)
 
 ---
 
-## 🗺️ Roadmap
 
-### ✅ Completed (Q4 2024)
-- Multi-AZ VPC with ECS Fargate deployment
-- S3 + DynamoDB Terraform backend
-- Golden AMI pipeline with security validation
-- GitHub Actions CI/CD automation
-
-### 🔄 In Progress (Q1 2025)
-- Grafana + Prometheus observability integration
-- S3 + CloudFront static asset distribution
-- Advanced CloudWatch dashboards
-- Cross-region disaster recovery
-
-### 📋 Planned (Q2 2025)
-- AWS Organizations multi-account setup
-- EKS migration path preparation
-- Automated disaster recovery testing
-- Cost optimization recommendations engine
-
----
-
-## 📝 License
+##  License
 
 MIT License - see [LICENSE.txt](LICENSE.txt) for details.
 
