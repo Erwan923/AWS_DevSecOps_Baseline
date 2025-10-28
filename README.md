@@ -381,13 +381,3 @@ Alternative: Dynamic provisioning (rejected due to slower deployment)
 MIT License - see [LICENSE.txt](LICENSE.txt) for details.
 
 ---
-
-<div align="center">
-
-**Built for secure, automated infrastructure**
-
-⭐ Star this repository if it helped you!
-
-![Visitors](https://visitor-badge.laobi.icu/badge?page_id=YOUR_USERNAME.AWS_DevSecOps_Baseline)
-
-</div>
